@@ -22,3 +22,5 @@
 go.work
 
 /FileToBase64Converter
+
+/.idea
