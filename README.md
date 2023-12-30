@@ -7,7 +7,7 @@ Any errors encountered during the process are logged and result in program termi
 # Installation
 To install `FileToBase64Converter` run the below command in your terminal.
 ```bash
-go install github.com/vkeerthivikram/FileToBase64Converter
+go install github.com/vkeerthivikram/FileToBase64Converter@latest
 ```
 # Contributing
 Feel free to fork the repository and submit pull requests.
