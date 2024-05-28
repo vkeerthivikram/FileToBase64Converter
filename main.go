@@ -9,6 +9,21 @@ import (
 	"time"
 )
 
+// main is the entry point of the program. It takes a file path as a command-line argument,
+// converts the contents of the file to base64, and writes the result to a new file.
+//
+// Parameters:
+//
+//	None
+//
+// Returns:
+//
+//	nil - If the operation is successful.
+//	error - If an error occurs during file operations.
+//
+// Example:
+//
+//	go run main.go input.txt
 func main() {
 	args := os.Args
 	if len(args) != 2 {
@@ -16,20 +31,34 @@ func main() {
 		return
 	}
 
-	ConvertFileToBase64(args[1])
+	err := ConvertFileToBase64(args[1])
+	if err != nil {
+		log.Fatal("error converting file to base64: ", err)
+		return
+	}
 }
 
-// ConvertFileToBase64 converts a file to its Base64 representation and saves it as a new file.
-// The function takes a file path as input and reads the file content into a byte array.
-// It then encodes the byte array to Base64 format and creates a new file with the encoded data.
-// The new file is saved in the same directory as the original file, with a name starting with "base64_",
-// followed by the original file name and a timestamp in Unix format.
-// The function returns an error if any of the file operations fail.
-func ConvertFileToBase64(fp string) {
+// ConvertFileToBase64 reads a file at the specified path, converts its contents to base64,
+// and writes the result to a new file. The new file's name is based on the original file's name
+// with "_base64_" and a timestamp appended.
+//
+// Parameters:
+//
+//	fp (string) - The path to the input file.
+//
+// Returns:
+//
+//	nil - If the operation is successful.
+//	error - If an error occurs during file operations.
+//
+// Example:
+//
+//	ConvertFileToBase64("input.txt")
+func ConvertFileToBase64(fp string) error {
 	file, err := os.Open(fp)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer func(file *os.File) {
@@ -44,8 +73,7 @@ func ConvertFileToBase64(fp string) {
 	bytes := make([]byte, fileSize)
 	_, err = file.Read(bytes)
 	if err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
 	encoded := base64.StdEncoding.EncodeToString(bytes)
 	timestamp := time.Now().Unix()
@@ -54,7 +82,8 @@ func ConvertFileToBase64(fp string) {
 	newFilePath := filepath.Join(filepath.Dir(fp), newFileName)
 	err = os.WriteFile(newFilePath, []byte(encoded), 0644)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	fmt.Printf("File successfully encrypted to base64 and saved as %s\n", newFileName)
+	return nil
 }
